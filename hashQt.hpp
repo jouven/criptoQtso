@@ -3,8 +3,6 @@
 
 #include "baseClassQtso/baseClassQt.hpp"
 
-#include "config.h"
-
 #include <QString>
 
 #include <vector>
@@ -64,7 +62,7 @@ private:
     outputType_ec outputType_pri = outputType_ec::number;
     hashType_ec hashType_pri = hashType_ec::crc32c;
 
-    std::vector<byte> digest_pri;
+    std::vector<uint_fast8_t> digest_pri;
 
 	//for crc32c or xxhash
 	uint_fast64_t hashNumberResult_pri = 0;
