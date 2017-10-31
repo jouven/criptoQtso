@@ -44,7 +44,7 @@ CONFIG(debug, debug|release){
     DEFINES += DEBUGJOUVEN
 }
 
-LIBS += -L/home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5 -lxxhashso -lcrc32cso -l:libcryptopp.a -lbaseClassQtso
+LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5 -lxxhashso -lcrc32cso -l:libcryptopp.a -lbaseClassQtso
 
 QMAKE_CXXFLAGS_DEBUG -= -g
 QMAKE_CXXFLAGS_DEBUG += -pedantic -Wall -Wextra -g3
