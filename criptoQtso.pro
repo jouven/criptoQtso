@@ -1,3 +1,4 @@
+#message($$QMAKESPEC)
 QT-= gui
 
 TARGET = criptoQtso
@@ -48,16 +49,17 @@ LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5 -lxxhashso
 
 QMAKE_CXXFLAGS_DEBUG -= -g
 QMAKE_CXXFLAGS_DEBUG += -pedantic -Wall -Wextra -g3
-#mingw (on msys2) can't handle lto
+
+#if not win32, add flto, mingw (on msys2) can't handle lto
 !win32:QMAKE_CXXFLAGS_RELEASE += -flto=jobserver
-!win32:QMAKE_LFLAGS_RELEASE += -flto=jobserver
+#qt QMAKE defaults strike again, adds -mtune=core2 just because in win32
+win32:QMAKE_CXXFLAGS -= -mtune=core2
 QMAKE_CXXFLAGS_RELEASE += -mtune=sandybridge
 
 #for -flto=jobserver in the link step to work with -j4
 !win32:QMAKE_LINK = +g++
-#for some reason QMAKE defaults add this to the linker, which is useless
-QMAKE_LFLAGS -= -m64
-#only for release...
-QMAKE_LFLAGS_RELEASE -= -Wl,-O1
 
+unix:QMAKE_LFLAGS += -fuse-ld=gold
 QMAKE_LFLAGS_RELEASE += -fvisibility=hidden
+#if not win32, add flto, mingw (on msys2) can't handle lto
+!win32:QMAKE_LFLAGS_RELEASE += -flto=jobserver
