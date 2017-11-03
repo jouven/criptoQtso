@@ -20,8 +20,6 @@
 #include <cstdint>
 #include <vector>
 
-#define BUFFERSIZE 32768
-
 struct XXH64_state_s
 {
    uint_fast64_t total_len;
@@ -110,9 +108,22 @@ void hasher_c::hashFile_f()
 	{
 		qint64 readSize(0);
 		std::vector<char> buffer;
-		if (inFile.size() > BUFFERSIZE)
+		//32K
+		constexpr int_fast64_t smallBuffer(32768);
+		//2MB
+		constexpr int_fast64_t bigBuffer(smallBuffer * 64);
+		//10MB
+		constexpr int_fast64_t bigBufferThreshold(bigBuffer * 5);
+		if (inFile.size() > smallBuffer)
 		{
-			readSize = BUFFERSIZE;
+			if (inFile.size() > bigBufferThreshold)
+			{
+				readSize = bigBuffer;
+			}
+			else
+			{
+				readSize = smallBuffer;
+			}
 		}
 		else
 		{
