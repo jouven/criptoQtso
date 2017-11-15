@@ -321,6 +321,17 @@ void hasher_c::doEncode_f()
 	//#ifdef DEBUGJOUVEN
 	//			DEBUGSOURCEBEGIN
 	//#endif
+
+	//otherwise the bigger hashes won't have output at all
+	if (outputType_pri == outputType_ec::number and (hashType_pri == hashType_ec::crc32c or hashType_pri == hashType_ec::XXHASH64))
+	{
+		//nothing
+	}
+	else
+	{
+		outputType_pri = outputType_ec::hex;
+	}
+
 	switch (outputType_pri)
 	{
 	case outputType_ec::number:
