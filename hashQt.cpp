@@ -323,23 +323,24 @@ void hasher_c::doEncode_f()
 	//#endif
 
 	//otherwise the bigger hashes won't have output at all
-	if (outputType_pri == outputType_ec::number and (hashType_pri == hashType_ec::crc32c or hashType_pri == hashType_ec::XXHASH64))
+	if (outputType_pri == outputType_ec::unsigned64bitInteger and not (hashType_pri == hashType_ec::crc32c or hashType_pri == hashType_ec::XXHASH64))
 	{
 		//nothing
+		outputType_pri = outputType_ec::decimalString;
 	}
 	else
 	{
-		outputType_pri = outputType_ec::hex;
+
 	}
 
 	switch (outputType_pri)
 	{
-	case outputType_ec::number:
+	case outputType_ec::unsigned64bitInteger:
 	{
 		//do nothing, it's done one the hash phase for those able to fit in a number
 	}
 		break;
-	case outputType_ec::base64:
+	case outputType_ec::base64String:
 	{
 		if (hashNumberResultSet_pri)
 		{
@@ -356,7 +357,7 @@ void hasher_c::doEncode_f()
 		hashStringResultSet_pri = true;
 	}
 		break;
-	case outputType_ec::hex:
+	case outputType_ec::hexadecimalString:
 	{
 		if (hashNumberResultSet_pri)
 		{
@@ -369,6 +370,21 @@ void hasher_c::doEncode_f()
 			encoder.Attach(new CryptoPP::StringSink(hashStringResult_pri));
 			encoder.Put(&digest_pri[0], digest_pri.size());
 			encoder.MessageEnd();
+		}
+		hashStringResultSet_pri = true;
+	}
+		break;
+	case outputType_ec::decimalString:
+	{
+		if (hashNumberResultSet_pri)
+		{
+			hashStringResult_pri = CryptoPP::IntToString<uint_fast64_t>(hashNumberResult_pri, 10);
+		}
+
+		if (hashStringResult_pri.empty() and not digest_pri.empty())
+		{
+			CryptoPP::Integer integerTmp(&digest_pri[0], digest_pri.size());
+			hashStringResult_pri = CryptoPP::IntToString<CryptoPP::Integer>(integerTmp, 10);
 		}
 		hashStringResultSet_pri = true;
 	}
