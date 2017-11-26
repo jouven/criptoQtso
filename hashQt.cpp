@@ -35,6 +35,33 @@ typedef XXH64_state_s XXH64_state_t;
 namespace eines
 {
 
+template <typename T>
+std::vector<byte> intToByte_f(
+        const T integer_par_con
+)
+{
+    std::vector<byte> byteVector(sizeof(T));
+    #ifdef DEBUGJOUVEN
+                    //std::cout << DEBUGDATETIME << "sizeof(uint_fast64_t) " << sizeof(uint_fast64_t) << std::endl;
+    #endif
+
+    std::copy(static_cast<const byte*>(static_cast<const void*>(&integer_par_con)),
+              static_cast<const byte*>(static_cast<const void*>(&integer_par_con)) + sizeof(T),
+              &byteVector[0]);
+#if BYTE_ORDER == LITTLE_ENDIAN
+    std::reverse(byteVector.begin(), byteVector.end());
+#endif
+//#if byteVector == BYTE_ORDER
+//    for (std::size_t i = 0; i < sizeof(uint_fast64_t); ++i)
+//        byteVector[(sizeof(uint_fast64_t) - 1) - i] = (integer_par_con >> (i * 8));
+//#else
+//    for (std::size_t i = 0; i < sizeof(uint_fast64_t); ++i)
+//        byteVector[i] = (integer_par_con >> (i * 8));
+//#endif
+
+	return byteVector;
+}
+
 void hasher_c::generateHash_f()
 {
 	//#ifdef DEBUGJOUVEN
@@ -47,7 +74,7 @@ void hasher_c::generateHash_f()
 	{
 	case inputType_ec::file:
 	{
-		if (input_pri.isEmpty())
+		if (inputFilePath_pri.isEmpty())
 		{
 			appendError_f("Empty filename");
 		}
@@ -59,7 +86,7 @@ void hasher_c::generateHash_f()
 		break;
 	case inputType_ec::string:
 	{
-		if (input_pri.isEmpty())
+		if (inputString_pri.isEmpty())
 		{
 			appendError_f("Empty string");
 		}
@@ -77,14 +104,24 @@ void hasher_c::generateHash_f()
 	//#endif
 }
 
-uint_fast64_t hasher_c::hashNumberResult_f() const
+uint64_t hasher_c::hash64BitNumberResult_f() const
 {
-	return hashNumberResult_pri;
+	return hash64BitNumberResult_pri;
 }
 
-bool hasher_c::hashNumberResultSet_f() const
+uint32_t hasher_c::hash32BitNumberResult_f() const
 {
-	return hashNumberResultSet_pri;
+	return hash32BitNumberResult_pri;
+}
+
+bool hasher_c::hash64BitNumberResultSet_f() const
+{
+	return hash64BitNumberResultSet_pri;
+}
+
+bool hasher_c::hash32BitNumberResultSet_f() const
+{
+	return hash32BitNumberResultSet_pri;
 }
 
 std::string hasher_c::hashStringResult_f() const
@@ -103,7 +140,7 @@ void hasher_c::hashFile_f()
 	//			DEBUGSOURCEBEGIN
 	//#endif
 
-	QFile inFile(input_pri);
+	QFile inFile(inputFilePath_pri);
 	if (inFile.open(QIODevice::ReadOnly))
 	{
 		qint64 readSize(0);
@@ -138,8 +175,8 @@ void hasher_c::hashFile_f()
 		{
 			do
 			{
-				hashNumberResult_pri = crc32c_append(
-				            hashNumberResult_pri
+				hash32BitNumberResult_pri = crc32c_append(
+				            hash32BitNumberResult_pri
 				            , reinterpret_cast<const uint8_t*>(&buffer[0])
 				        , sizeReadTmp
 				);
@@ -148,7 +185,7 @@ void hasher_c::hashFile_f()
 			if (sizeReadTmp < 0)
 			{
 				//error
-				appendError_f("Error while reading file: " + input_pri);
+				appendError_f("Error while reading file: " + inputFilePath_pri);
 #ifdef DEBUGJOUVEN
 				//QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -157,14 +194,14 @@ void hasher_c::hashFile_f()
             {
                 if (sizeReadTmp > 0)
                 {
-                    hashNumberResult_pri = crc32c_append(
-                                hashNumberResult_pri
+                    hash32BitNumberResult_pri = crc32c_append(
+                                hash32BitNumberResult_pri
                                 , reinterpret_cast<const uint8_t*>(&buffer[0])
                             , sizeReadTmp
                     );
                 }
             }
-            hashNumberResultSet_pri = true;
+            hash32BitNumberResultSet_pri = true;
         }
             break;
         case hashType_ec::XXHASH64:
@@ -182,7 +219,7 @@ void hasher_c::hashFile_f()
                 if (sizeReadTmp < 0)
                 {
                     //error
-                    appendError_f("Error while reading file: " + input_pri);
+                    appendError_f("Error while reading file: " + inputFilePath_pri);
 #ifdef DEBUGJOUVEN
                     //QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -194,13 +231,13 @@ void hasher_c::hashFile_f()
                         XXH64_update(&state64, &buffer[0], sizeReadTmp);
                     }
                 }
-                hashNumberResult_pri = XXH64_digest(&state64);
+                hash64BitNumberResult_pri = XXH64_digest(&state64);
             }
             else
             {
-                hashNumberResult_pri = XXH64(&buffer[0], sizeReadTmp, XXHSUM64_DEFAULT_SEED);
+                hash64BitNumberResult_pri = XXH64(&buffer[0], sizeReadTmp, XXHSUM64_DEFAULT_SEED);
             }
-            hashNumberResultSet_pri = true;
+            hash64BitNumberResultSet_pri = true;
         }
             break;
         case hashType_ec::whirlpool:
@@ -214,7 +251,7 @@ void hasher_c::hashFile_f()
             if (sizeReadTmp < 0)
             {
                 //error
-                appendError_f("Error while reading file: " + input_pri);
+                appendError_f("Error while reading file: " + inputFilePath_pri);
 #ifdef DEBUGJOUVEN
                 //QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -241,7 +278,7 @@ void hasher_c::hashFile_f()
             if (sizeReadTmp < 0)
             {
                 //error
-                appendError_f("Error while reading file: " + input_pri);
+                appendError_f("Error while reading file: " + inputFilePath_pri);
 #ifdef DEBUGJOUVEN
                 //QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -261,7 +298,7 @@ void hasher_c::hashFile_f()
     }
     else
     {
-        appendError_f("Couldn't open file: " + input_pri);
+        appendError_f("Couldn't open file: " + inputFilePath_pri);
     }
     //#ifdef DEBUGJOUVEN
     //			DEBUGSOURCEEND
@@ -279,25 +316,25 @@ void hasher_c::hashString_f()
 	{
 	case hashType_ec::crc32c:
 	{
-		hashNumberResult_pri = crc32c_append(
-		            hashNumberResult_pri
-		            , reinterpret_cast<const uint8_t*>(input_pri.data())
-		        , input_pri.size()
+		hash32BitNumberResult_pri = crc32c_append(
+		            hash32BitNumberResult_pri
+		            , reinterpret_cast<const uint8_t*>(inputString_pri.data())
+		        , inputString_pri.size()
 		);
-		hashNumberResultSet_pri = true;
+		hash32BitNumberResultSet_pri = true;
 	}
 		break;
 	case hashType_ec::XXHASH64:
 	{
 #define XXHSUM64_DEFAULT_SEED 0
-        hashNumberResult_pri = XXH64(input_pri.data(), input_pri.size(), XXHSUM64_DEFAULT_SEED);
-        hashNumberResultSet_pri = true;
+        hash64BitNumberResult_pri = XXH64(inputString_pri.data(), inputString_pri.size(), XXHSUM64_DEFAULT_SEED);
+        hash64BitNumberResultSet_pri = true;
     }
         break;
     case hashType_ec::whirlpool:
     {
         CryptoPP::Whirlpool hash;
-        hash.Update(reinterpret_cast<const byte*>(input_pri.data()), input_pri.size());
+        hash.Update(reinterpret_cast<const byte*>(inputString_pri.data()), inputString_pri.size());
         digest_pri.resize(CryptoPP::Whirlpool::DIGESTSIZE);
         hash.Final(&digest_pri[0]);
     }
@@ -305,7 +342,7 @@ void hasher_c::hashString_f()
     case hashType_ec::SHA256:
     {
         CryptoPP::SHA256 hash;
-        hash.Update(reinterpret_cast<const byte*>(input_pri.data()), input_pri.size());
+        hash.Update(reinterpret_cast<const byte*>(inputString_pri.data()), inputString_pri.size());
         digest_pri.resize(CryptoPP::SHA256::DIGESTSIZE);
         hash.Final(&digest_pri[0]);
     }
@@ -323,7 +360,7 @@ void hasher_c::doEncode_f()
 	//#endif
 
 	//otherwise the bigger hashes won't have output at all
-	if (outputType_pri == outputType_ec::unsigned64bitInteger and not (hashType_pri == hashType_ec::crc32c or hashType_pri == hashType_ec::XXHASH64))
+	if (outputType_pri == outputType_ec::unsignedXbitInteger and not (hashType_pri == hashType_ec::crc32c or hashType_pri == hashType_ec::XXHASH64))
 	{
 		//nothing
 		outputType_pri = outputType_ec::decimalString;
@@ -335,57 +372,61 @@ void hasher_c::doEncode_f()
 
 	switch (outputType_pri)
 	{
-	case outputType_ec::unsigned64bitInteger:
+	case outputType_ec::unsignedXbitInteger:
 	{
 		//do nothing, it's done one the hash phase for those able to fit in a number
 	}
 		break;
 	case outputType_ec::base64String:
 	{
-		if (hashNumberResultSet_pri)
+		if (hash64BitNumberResultSet_pri and digest_pri.empty())
 		{
-			hashStringResult_pri = CryptoPP::IntToString<uint_fast64_t>(hashNumberResult_pri, 64);
+			digest_pri = intToByte_f(hash64BitNumberResult_pri);
 		}
 
-		if (hashStringResult_pri.empty() and not digest_pri.empty())
+		if (hash32BitNumberResultSet_pri and digest_pri.empty())
 		{
-			CryptoPP::Base64Encoder encoder;
-			encoder.Attach(new CryptoPP::StringSink(hashStringResult_pri));
-			encoder.Put(&digest_pri[0], digest_pri.size());
-			encoder.MessageEnd();
+			digest_pri = intToByte_f(hash32BitNumberResult_pri);
 		}
+
+		CryptoPP::Base64Encoder encoder(new CryptoPP::StringSink(hashStringResult_pri), false);
+		encoder.Put(&digest_pri[0], digest_pri.size());
+		encoder.MessageEnd();
 		hashStringResultSet_pri = true;
 	}
 		break;
 	case outputType_ec::hexadecimalString:
 	{
-		if (hashNumberResultSet_pri)
+		if (hash64BitNumberResultSet_pri and digest_pri.empty())
 		{
-			hashStringResult_pri = CryptoPP::IntToString<uint_fast64_t>(hashNumberResult_pri, 16);
+			digest_pri = intToByte_f(hash64BitNumberResult_pri);
 		}
 
-		if (hashStringResult_pri.empty() and not digest_pri.empty())
+		if (hash32BitNumberResultSet_pri and digest_pri.empty())
 		{
-			CryptoPP::HexEncoder encoder;
-			encoder.Attach(new CryptoPP::StringSink(hashStringResult_pri));
-			encoder.Put(&digest_pri[0], digest_pri.size());
-			encoder.MessageEnd();
+			digest_pri = intToByte_f(hash32BitNumberResult_pri);
 		}
+
+		CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(hashStringResult_pri), true);
+		encoder.Put(&digest_pri[0], digest_pri.size());
+		encoder.MessageEnd();
 		hashStringResultSet_pri = true;
 	}
 		break;
 	case outputType_ec::decimalString:
 	{
-		if (hashNumberResultSet_pri)
+		if (hash64BitNumberResultSet_pri and digest_pri.empty())
 		{
-			hashStringResult_pri = CryptoPP::IntToString<uint_fast64_t>(hashNumberResult_pri, 10);
+			digest_pri = intToByte_f(hash64BitNumberResult_pri);
 		}
 
-		if (hashStringResult_pri.empty() and not digest_pri.empty())
+		if (hash32BitNumberResultSet_pri and digest_pri.empty())
 		{
-			CryptoPP::Integer integerTmp(&digest_pri[0], digest_pri.size());
-			hashStringResult_pri = CryptoPP::IntToString<CryptoPP::Integer>(integerTmp, 10);
+			digest_pri = intToByte_f(hash32BitNumberResult_pri);
 		}
+
+		CryptoPP::Integer integerTmp(&digest_pri[0], digest_pri.size());
+		hashStringResult_pri = CryptoPP::IntToString<CryptoPP::Integer>(integerTmp, 10);
 		hashStringResultSet_pri = true;
 	}
 		break;
@@ -400,10 +441,17 @@ hasher_c::hasher_c(const inputType_ec inputType_par_con
                    , const outputType_ec outputType_par_con
                    , const hashType_ec hashType_par_con) :
     inputType_pri(inputType_par_con)
-  , input_pri(input_par_con)
   , outputType_pri(outputType_par_con)
   , hashType_pri(hashType_par_con)
 {
+    if (inputType_par_con == inputType_ec::file)
+    {
+        inputFilePath_pri = input_par_con;
+    }
+    if (inputType_par_con == inputType_ec::string)
+    {
+        inputString_pri.append(input_par_con);
+    }
 }
 
 }

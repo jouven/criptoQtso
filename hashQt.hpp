@@ -4,6 +4,7 @@
 #include "baseClassQtso/baseClassQt.hpp"
 
 #include <QString>
+#include <QByteArray>
 
 #include <vector>
 #include <string>
@@ -23,11 +24,11 @@ public:
     {
         string, file
     };
-    //unsigned64bitInteger works for crc32c and xxhash because it outputs to hashNumberResult_pri (a 64bit unsigned integer)
-    //the others require *String outputs, they are too big to fit in a 64bit integer
+    //unsignedXbitInteger works for crc32c and xxhash because they fit in native integers types,
+    //the others require *String outputs, they are too big to fit in a 64bit integer (C++ largest integer type on a 64-bit system)
     enum class outputType_ec
     {
-        unsigned64bitInteger,
+        unsignedXbitInteger,
         decimalString,
         hexadecimalString,
         base64String
@@ -51,24 +52,34 @@ public:
 
     void generateHash_f();
 
-    uint_fast64_t hashNumberResult_f() const;
-    bool hashNumberResultSet_f() const;
+    //for 64 bit hash (xxhash)
+    uint64_t hash64BitNumberResult_f() const;
+    bool hash64BitNumberResultSet_f() const;
+    //for 32 bit hash (crc32c)
+    uint32_t hash32BitNumberResult_f() const;
+    bool hash32BitNumberResultSet_f() const;
 
     std::string hashStringResult_f() const;
     bool hashStringResultSet_f() const;
 
 private:
     inputType_ec inputType_pri = inputType_ec::string;
-    QString input_pri;
-    outputType_ec outputType_pri = outputType_ec::unsigned64bitInteger;
+    QString inputFilePath_pri;
+    QByteArray inputString_pri;
+    outputType_ec outputType_pri = outputType_ec::unsignedXbitInteger;
     hashType_ec hashType_pri = hashType_ec::crc32c;
 
     std::vector<uint_fast8_t> digest_pri;
 
-	//for crc32c or xxhash
-	uint_fast64_t hashNumberResult_pri = 0;
-	bool hashNumberResultSet_pri = false;
-	//ascii so it can be std::string
+	//for 64 bit hash (xxhash)
+	uint64_t hash64BitNumberResult_pri = 0;
+	bool hash64BitNumberResultSet_pri = false;
+
+	//for 32 bit hash (crc32c)
+	uint32_t hash32BitNumberResult_pri = 0;
+	bool hash32BitNumberResultSet_pri = false;
+
+	//ascii so it can be std::string, for everything
 	std::string hashStringResult_pri;
 	bool hashStringResultSet_pri = false;
 
