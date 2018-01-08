@@ -12,7 +12,9 @@
 
 #ifdef DEBUGJOUVEN
 #include "comuso/loggingMacros.hpp"
+#ifndef __ANDROID__
 #include "backwardSTso/backward.hpp"
+#endif
 #endif
 
 #include <QFile>
