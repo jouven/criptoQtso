@@ -30,7 +30,8 @@ win32:MYPATH = "H:/veryuseddata/portable/msys64/"
 
 #mine
 INCLUDEPATH += $${MYPATH}home/jouven/mylibs/include
-!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
+#!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
+!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp700
 android:INCLUDEPATH += $${MYPATH}home/jouven/sourcesAndroid/plain/cryptopp-CRYPTOPP_5_6_5
 
 if (!android){
@@ -48,11 +49,11 @@ CONFIG(debug, debug|release){
     QMAKE_RPATHDIR += $${MYPATH}home/jouven/mylibs/debug
     DEFINES += DEBUGJOUVEN
 }
-LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
+#LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
+LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp700
 }
 
-if (android)
-{
+if (android){
 #release
 CONFIG(release, debug|release){
     LIBS += -L$${MYPATH}home/jouven/mylibsAndroid/release
