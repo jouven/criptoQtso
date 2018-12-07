@@ -22,6 +22,12 @@
 #include <cstdint>
 #include <vector>
 
+#if (CRYPTOPP_VERSION >= 600) && (__cplusplus >= 201103L)
+    using byte = CryptoPP::byte;
+#else
+    typedef unsigned char byte;
+#endif
+
 struct XXH64_state_s
 {
    uint_fast64_t total_len;
