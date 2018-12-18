@@ -1,5 +1,7 @@
-#ifndef CRIPTOQTSO_HASH_HPP
-#define CRIPTOQTSO_HASH_HPP
+#ifndef CRYPTOQTSO_HASH_HPP
+#define CRYPTOQTSO_HASH_HPP
+
+#include "crossPlatformMacros.hpp"
 
 #include "baseClassQtso/baseClassQt.hpp"
 
@@ -12,7 +14,7 @@
 namespace eines
 {
 
-class hasher_c : public baseClassQt_c
+class EXPIMP_CRYPTOQTSO hasher_c : public baseClassQt_c
 {
 public:
 
@@ -91,4 +93,4 @@ private:
 }
 
 
-#endif // CRIPTOQTSO_HASH_HPP
+#endif // CRYPTOQTSO_HASH_HPP

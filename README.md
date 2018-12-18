@@ -1,4 +1,4 @@
-# criptoQtso
+# cryptoQtso
 C++ library to hash string or files in several types of hash (crc32c, xxhash, whirlpool and SHA256), Qt version, Qt solves the big issue of reading UTF8 filenames correctly in windows, mingw32 ifstream can't.
 
 Compilation
@@ -17,7 +17,7 @@ https://cryptopp.com/
 
 Check .pro file to know what library names expect (or to change them).
 
-Run (in criptoQtso source directory or pointing to it):
+Run (in cryptoQtso source directory or pointing to it):
 
     qmake
 
