@@ -28,18 +28,6 @@
     typedef unsigned char byte;
 #endif
 
-struct XXH64_state_s
-{
-   uint_fast64_t total_len;
-   uint_fast64_t v1;
-   uint_fast64_t v2;
-   uint_fast64_t v3;
-   uint_fast64_t v4;
-   uint_fast64_t mem64[4];   /* buffer defined as U64 for alignment */
-   uint_fast64_t memsize;
-};
-typedef XXH64_state_s XXH64_state_t;
-
 namespace eines
 {
 
