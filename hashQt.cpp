@@ -2,7 +2,7 @@
 //crc32c
 #include "crc32cso/crc32c.hpp"
 //xxhash
-#include "xxhashso/xxhash.h"
+#include "xxHashso/xxhash.h"
 //cryptopp
 #include <hex.h>
 #include <sha.h>

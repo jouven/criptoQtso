@@ -77,14 +77,13 @@ CONFIG(debug, debug|release){
 LIBS += -L$${MYPATH}home/jouven/sourcesAndroid/plain/cryptopp-CRYPTOPP_5_6_5
 }
 
-LIBS += -l:libxxhash.a -lcrc32cso -l:libcryptopp.a -lbaseClassQtso
+LIBS += -l:libxxHashso.a -lcrc32cso -l:libcryptopp.a -lbaseClassQtso
 
 QMAKE_CXXFLAGS_DEBUG -= -g
 QMAKE_CXXFLAGS_DEBUG += -pedantic -Wall -Wextra -g3
 
-#if not win32, add flto, mingw (on msys2) can't handle lto, CXXFLAGS
 linux:QMAKE_CXXFLAGS_RELEASE += -flto=jobserver
-#win32::QMAKE_CXXFLAGS_RELEASE += -flto
+win32:QMAKE_CXXFLAGS_RELEASE += -flto
 !android:QMAKE_CXXFLAGS_RELEASE += -mtune=sandybridge
 
 #for -flto=jobserver in the link step to work with -jX
@@ -92,6 +91,6 @@ linux:!android:QMAKE_LINK = +g++
 
 linux:QMAKE_LFLAGS += -fuse-ld=gold
 QMAKE_LFLAGS_RELEASE += -fvisibility=hidden
-#if not win32, add flto, mingw (on msys2) can't handle lto, LFLAGS
+
 linux:QMAKE_LFLAGS_RELEASE += -flto=jobserver
-#win32::QMAKE_LFLAGS_RELEASE += -flto
+win32:QMAKE_LFLAGS_RELEASE += -flto -Wl,--allow-multiple-definition
