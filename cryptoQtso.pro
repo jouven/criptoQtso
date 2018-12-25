@@ -89,8 +89,9 @@ win32:QMAKE_CXXFLAGS_RELEASE += -flto
 #for -flto=jobserver in the link step to work with -jX
 linux:!android:QMAKE_LINK = +g++
 
+QMAKE_LFLAGS += -Wl,--allow-multiple-definition
 linux:QMAKE_LFLAGS += -fuse-ld=gold
 QMAKE_LFLAGS_RELEASE += -fvisibility=hidden
 
 linux:QMAKE_LFLAGS_RELEASE += -flto=jobserver
-win32:QMAKE_LFLAGS_RELEASE += -flto -Wl,--allow-multiple-definition
+win32:QMAKE_LFLAGS_RELEASE += -flto 
