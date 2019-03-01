@@ -38,7 +38,7 @@ win32:MYPATH = "H:/veryuseddata/portable/msys64/"
 #mine
 INCLUDEPATH += $${MYPATH}home/jouven/mylibs/include
 #!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
-!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp700
+!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp810
 android:INCLUDEPATH += $${MYPATH}home/jouven/sourcesAndroid/plain/cryptopp-CRYPTOPP_5_6_5
 
 if (!android){
@@ -57,7 +57,7 @@ CONFIG(debug, debug|release){
     DEFINES += DEBUGJOUVEN
 }
 #LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
-LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp700
+LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp810
 }
 
 if (android){
