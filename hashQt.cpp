@@ -28,8 +28,6 @@
     typedef unsigned char byte;
 #endif
 
-namespace eines
-{
 
 template <typename T>
 std::vector<byte> intToByte_f(
@@ -450,4 +448,3 @@ hasher_c::hasher_c(const inputType_ec inputType_par_con
     }
 }
 
-}

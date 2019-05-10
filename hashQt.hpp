@@ -11,8 +11,6 @@
 #include <vector>
 #include <string>
 
-namespace eines
-{
 
 class EXPIMP_CRYPTOQTSO hasher_c : public baseClassQt_c
 {
@@ -90,7 +88,6 @@ private:
     void doEncode_f();
 };
 
-}
 
 
 #endif // CRYPTOQTSO_HASH_HPP
