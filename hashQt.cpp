@@ -179,7 +179,7 @@ void hasher_c::hashFile_f()
 			if (sizeReadTmp < 0)
 			{
 				//error
-				appendError_f("Error while reading file: " + inputFilePath_pri);
+				appendError_f({"Error while reading file: {0}", inputFilePath_pri});
 #ifdef DEBUGJOUVEN
 				//QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -213,7 +213,7 @@ void hasher_c::hashFile_f()
                 if (sizeReadTmp < 0)
                 {
                     //error
-                    appendError_f("Error while reading file: " + inputFilePath_pri);
+                    appendError_f({"Error while reading file: {0}", inputFilePath_pri});
 #ifdef DEBUGJOUVEN
                     //QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -245,7 +245,7 @@ void hasher_c::hashFile_f()
             if (sizeReadTmp < 0)
             {
                 //error
-                appendError_f("Error while reading file: " + inputFilePath_pri);
+                appendError_f({"Error while reading file: {0}", inputFilePath_pri});
 #ifdef DEBUGJOUVEN
                 //QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -272,7 +272,7 @@ void hasher_c::hashFile_f()
             if (sizeReadTmp < 0)
             {
                 //error
-                appendError_f("Error while reading file: " + inputFilePath_pri);
+                appendError_f({"Error while reading file: {0}", inputFilePath_pri});
 #ifdef DEBUGJOUVEN
                 //QOUT_TS("(downloadServerSocket_c::readyRead_f) error sizeread " << sizeReadTmp << endl);
 #endif
@@ -292,7 +292,7 @@ void hasher_c::hashFile_f()
     }
     else
     {
-        appendError_f("Couldn't open file: " + inputFilePath_pri);
+        appendError_f({"Couldn't open file: {0}", inputFilePath_pri});
     }
     //#ifdef DEBUGJOUVEN
     //			DEBUGSOURCEEND
@@ -353,77 +353,76 @@ void hasher_c::doEncode_f()
 	//			DEBUGSOURCEBEGIN
 	//#endif
 
-	//otherwise the bigger hashes won't have output at all
+	//if output option is an integer but the output of the hash doesn't fit (in a 64 bit integer), force decimalnumber-string output
 	if (outputType_pri == outputType_ec::unsignedXbitInteger and not (hashType_pri == hashType_ec::crc32c or hashType_pri == hashType_ec::XXHASH64))
 	{
-		//nothing
 		outputType_pri = outputType_ec::decimalString;
 	}
 	else
 	{
-
+		//they fit into a 64bit int
 	}
 
 	switch (outputType_pri)
 	{
-	case outputType_ec::unsignedXbitInteger:
-	{
-		//do nothing, it's done one the hash phase for those able to fit in a number
-	}
-		break;
-	case outputType_ec::base64String:
-	{
-		if (hash64BitNumberResultSet_pri and digest_pri.empty())
+		case outputType_ec::unsignedXbitInteger:
 		{
-			digest_pri = intToByte_f(hash64BitNumberResult_pri);
+			//do nothing, it's done one the hash phase for those able to fit in a number
 		}
-
-		if (hash32BitNumberResultSet_pri and digest_pri.empty())
+			break;
+		case outputType_ec::base64String:
 		{
-			digest_pri = intToByte_f(hash32BitNumberResult_pri);
-		}
+			if (hash64BitNumberResultSet_pri and digest_pri.empty())
+			{
+				digest_pri = intToByte_f(hash64BitNumberResult_pri);
+			}
 
-		CryptoPP::Base64Encoder encoder(new CryptoPP::StringSink(hashStringResult_pri), false);
-		encoder.Put(&digest_pri[0], digest_pri.size());
-		encoder.MessageEnd();
-		hashStringResultSet_pri = true;
-	}
-		break;
-	case outputType_ec::hexadecimalString:
-	{
-		if (hash64BitNumberResultSet_pri and digest_pri.empty())
+			if (hash32BitNumberResultSet_pri and digest_pri.empty())
+			{
+				digest_pri = intToByte_f(hash32BitNumberResult_pri);
+			}
+
+			CryptoPP::Base64Encoder encoder(new CryptoPP::StringSink(hashStringResult_pri), false);
+			encoder.Put(&digest_pri[0], digest_pri.size());
+			encoder.MessageEnd();
+			hashStringResultSet_pri = true;
+		}
+			break;
+		case outputType_ec::hexadecimalString:
 		{
-			digest_pri = intToByte_f(hash64BitNumberResult_pri);
-		}
+			if (hash64BitNumberResultSet_pri and digest_pri.empty())
+			{
+				digest_pri = intToByte_f(hash64BitNumberResult_pri);
+			}
 
-		if (hash32BitNumberResultSet_pri and digest_pri.empty())
+			if (hash32BitNumberResultSet_pri and digest_pri.empty())
+			{
+				digest_pri = intToByte_f(hash32BitNumberResult_pri);
+			}
+
+			CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(hashStringResult_pri), true);
+			encoder.Put(&digest_pri[0], digest_pri.size());
+			encoder.MessageEnd();
+			hashStringResultSet_pri = true;
+		}
+			break;
+		case outputType_ec::decimalString:
 		{
-			digest_pri = intToByte_f(hash32BitNumberResult_pri);
-		}
+			if (hash64BitNumberResultSet_pri and digest_pri.empty())
+			{
+				digest_pri = intToByte_f(hash64BitNumberResult_pri);
+			}
 
-		CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(hashStringResult_pri), true);
-		encoder.Put(&digest_pri[0], digest_pri.size());
-		encoder.MessageEnd();
-		hashStringResultSet_pri = true;
-	}
-		break;
-	case outputType_ec::decimalString:
-	{
-		if (hash64BitNumberResultSet_pri and digest_pri.empty())
-		{
-			digest_pri = intToByte_f(hash64BitNumberResult_pri);
-		}
+			if (hash32BitNumberResultSet_pri and digest_pri.empty())
+			{
+				digest_pri = intToByte_f(hash32BitNumberResult_pri);
+			}
 
-		if (hash32BitNumberResultSet_pri and digest_pri.empty())
-		{
-			digest_pri = intToByte_f(hash32BitNumberResult_pri);
+			CryptoPP::Integer integerTmp(&digest_pri[0], digest_pri.size());
+			hashStringResult_pri = CryptoPP::IntToString<CryptoPP::Integer>(integerTmp, 10);
+			hashStringResultSet_pri = true;
 		}
-
-		CryptoPP::Integer integerTmp(&digest_pri[0], digest_pri.size());
-		hashStringResult_pri = CryptoPP::IntToString<CryptoPP::Integer>(integerTmp, 10);
-		hashStringResultSet_pri = true;
-	}
-		break;
+			break;
 	};
 	//#ifdef DEBUGJOUVEN
 	//			DEBUGSOURCEEND;
