@@ -443,7 +443,7 @@ hasher_c::hasher_c(const inputType_ec inputType_par_con
     }
     if (inputType_par_con == inputType_ec::string)
     {
-        inputString_pri.append(input_par_con);
+        inputString_pri.append(input_par_con.toUtf8());
     }
 }
 
