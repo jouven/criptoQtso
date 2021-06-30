@@ -37,7 +37,7 @@ win32:MYPATH = "H:/veryuseddata/portable/msys64/"
 #mine
 INCLUDEPATH += $${MYPATH}home/jouven/mylibs/include
 #!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
-!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp820
+!android:INCLUDEPATH += $${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_8_5_0
 android:INCLUDEPATH += $${MYPATH}home/jouven/sourcesAndroid/plain/cryptopp-CRYPTOPP_5_6_5
 
 if (!android){
@@ -56,7 +56,7 @@ CONFIG(debug, debug|release){
     DEFINES += DEBUGJOUVEN
 }
 #LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_5_6_5
-LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp820
+LIBS += -L$${MYPATH}home/jouven/sources/plain/cryptopp-CRYPTOPP_8_5_0
 }
 
 if (android){
@@ -73,7 +73,7 @@ CONFIG(debug, debug|release){
     QMAKE_RPATHDIR += $${MYPATH}home/jouven/mylibsAndroid/debug
     DEFINES += DEBUGJOUVEN
 }
-LIBS += -L$${MYPATH}home/jouven/sourcesAndroid/plain/cryptopp-CRYPTOPP_5_6_5
+LIBS += -L$${MYPATH}home/jouven/sourcesAndroid/plain/cryptopp-CRYPTOPP_8_5_0
 }
 
 LIBS += -l:libxxHasha.a -lcrc32cso -l:libcryptopp.a -lbaseClassQtso
